@@ -2,9 +2,19 @@
 # ─────────────────────────────────────────────────────────────────────
 # awslc-boot-bench — CI pipeline for musl-static Rust builds
 # ─────────────────────────────────────────────────────────────────────
+# Action versions pinned to Node.js 24 runtimes (June 2026):
+#   actions/checkout          v6  (Node 24)
+#   actions/cache             v5  (Node 24, runner ≥ 2.327.1)
+#   actions/upload-artifact   v7  (Node 24)
+#   actions/download-artifact v6  (Node 24)
+# ─────────────────────────────────────────────────────────────────────
 name: Rust CI — musl-static
 
 on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
   workflow_dispatch:
 
 env:
@@ -17,12 +27,19 @@ permissions:
 
 jobs:
   # ── 1. Lint & format ──────────────────────────────────────────────
+  #  clippy --all-targets compiles the crate, so aws-lc-sys's cc-rs
+  #  build script needs musl-gcc on PATH.
   lint:
     name: Lint & Format
     runs-on: ubuntu-24.04
     steps:
       - name: Checkout
         uses: actions/checkout@v6
+
+      - name: Install musl toolchain
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends musl-tools
 
       - name: Install Rust toolchain
         uses: dtolnay/rust-toolchain@stable
@@ -67,7 +84,7 @@ jobs:
           targets: ${{ env.TARGET }}
 
       - name: Cache Cargo registry + build
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: |
             ~/.cargo/registry
