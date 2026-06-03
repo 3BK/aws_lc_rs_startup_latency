@@ -180,13 +180,13 @@ jobs:
         run: cargo install cargo-cyclonedx --locked
 
       - name: Generate SBOM
-        run: cargo cyclonedx --format json --output-cdx
+        run: cargo cyclonedx --format json --override-filename sbom-cyclonedx
 
       - name: Upload SBOM artifact
         uses: actions/upload-artifact@v7
         with:
           name: sbom-cyclonedx
-          path: "*.cdx.json"
+          path: "*.json"
           if-no-files-found: warn
           retention-days: 90
 
@@ -197,7 +197,7 @@ jobs:
     needs: build
     steps:
       - name: Download binary artifact
-        uses: actions/download-artifact@v6
+        uses: actions/download-artifact@v7
         with:
           name: awslc-boot-bench-musl-static
           path: ./bin
