@@ -7,7 +7,7 @@ license = "MIT"
 publish = false
 
 [dependencies]
-aws-lc-rs = { version = "1.17", default-features = false }
+aws-lc-rs = { version = "1.17", default-features = false, features =["aws-lc-sys"] }
 
 [profile.release]
 opt-level = 3
