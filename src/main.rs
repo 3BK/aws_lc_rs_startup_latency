@@ -19,11 +19,7 @@ use std::time::Instant;
 #[inline(never)]
 fn phase(label: &str, start: Instant) -> Instant {
     let elapsed = start.elapsed();
-    println!(
-        "{:<52} {:>10.3} ms",
-        label,
-        elapsed.as_secs_f64() * 1_000.0
-    );
+    println!("{:<52} {:>10.3} ms", label, elapsed.as_secs_f64() * 1_000.0);
     Instant::now()
 }
 
@@ -53,23 +49,20 @@ fn main() {
 
     // ── Phase 2: First fill — triggers jitter-entropy seeding ──────
     let mut buf = [0u8; 32];
-    aws_lc_rs::rand::SecureRandom::fill(&rng, &mut buf)
-        .expect("first fill failed");
+    aws_lc_rs::rand::SecureRandom::fill(&rng, &mut buf).expect("first fill failed");
     let t3 = phase("Phase 2  First  rand::fill(32 B)  ← SEED COST", t2);
     println!("         first 8 bytes: {:02x?}", &buf[..8]);
 
     // ── Phase 3: Second fill — pool already seeded ─────────────────
     let mut buf2 = [0u8; 32];
-    aws_lc_rs::rand::SecureRandom::fill(&rng, &mut buf2)
-        .expect("second fill failed");
+    aws_lc_rs::rand::SecureRandom::fill(&rng, &mut buf2).expect("second fill failed");
     let t4 = phase("Phase 3  Second rand::fill(32 B)", t3);
 
     // ── Phase 4: 100× fill — amortised cost ────────────────────────
     let iterations: u32 = 100;
     let mut scratch = [0u8; 32];
     for _ in 0..iterations {
-        aws_lc_rs::rand::SecureRandom::fill(&rng, &mut scratch)
-            .expect("loop fill failed");
+        aws_lc_rs::rand::SecureRandom::fill(&rng, &mut scratch).expect("loop fill failed");
     }
     let t5 = phase(
         &format!("Phase 4  {iterations}× rand::fill(32 B) total"),
@@ -86,8 +79,7 @@ fn main() {
     );
     println!(
         "{:<52} {:>10.0} ns",
-        "Amortised per-call (Phase 4)",
-        per_call_ns
+        "Amortised per-call (Phase 4)", per_call_ns
     );
     println!("{}", "=".repeat(65));
 
