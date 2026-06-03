@@ -9,9 +9,13 @@ publish = false
 [dependencies]
 aws-lc-rs = { version = "1.17", default-features = false, features =["aws-lc-sys"] }
 
+[target.'cfg(target_env = "musl")'.dependencies]
+mimalloc = { version = "0.1.52", features = ["secure"] }
+
 [profile.release]
 opt-level = 3
-lto = "fat"
+lto = true
 codegen-units = 1
 strip = true
 panic = "abort"
+

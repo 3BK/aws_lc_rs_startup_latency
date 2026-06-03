@@ -15,6 +15,10 @@
 
 use std::time::Instant;
 
+#[cfg(target_env = "musl")]
+#[global_allocator]
+static GLOBAL: mimalloc::MiMalloc = mimalloc::MiMalloc;
+
 /// Record a named phase and return the new Instant.
 #[inline(never)]
 fn phase(label: &str, start: Instant) -> Instant {
