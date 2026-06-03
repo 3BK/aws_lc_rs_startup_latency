@@ -33,5 +33,5 @@ clean:
 bench: release
 	@echo "Phase 2 seed-cost over 10 runs:"
 	@for i in $$(seq 1 10); do \
-		$(BIN) 2>/dev/null | grep "Phase 2" | awk '{print $$NF, $$7}'; \
+		$(BIN) 2>/dev/null | grep "Phase 2" | awk '{print $$9, $$NF}'; \
 	done
