@@ -1,0 +1,17 @@
+[package]
+name = "awslc-boot-bench"
+version = "0.1.0"
+edition = "2024"
+description = "Measures aws-lc-rs first-call jitter-entropy initialization latency under musl-static builds."
+license = "MIT"
+publish = false
+
+[dependencies]
+aws-lc-rs = { version = "1", default-features = false }
+
+[profile.release]
+opt-level = 3
+lto = "fat"
+codegen-units = 1
+strip = true
+panic = "abort"
